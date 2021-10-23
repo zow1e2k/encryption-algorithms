@@ -1,0 +1,427 @@
+Пропустить и перейти к основному содержимому
+Microsoft Ignite
+2–4 ноября 2021 г. | Бесплатное онлайн-мероприятие
+Присоединяйтесь к нам 2–4 ноября 2021 г. на цифровых мероприятиях, чтобы просмотреть новейшие демонстрации продуктов, поучаствовать в сеансе вопросов и ответов со специалистами Майкрософт, ознакомиться с подробными техническими обзорами, а также получить много другой информации. Приветствуются участники с любым уровнем навыков!
+
+Поиск
+
+Войти
+Docs .NET Браузер API .NET System.Diagnostics Stopwatch
+ Этот текст может быть частично переведен средствами машинного перевода.
+
+Версия
+Поиск
+Поиск
+System.Diagnostics
+ActivityIdFormat
+ActivityKind
+ActivitySamplingResult
+ActivityTraceFlags
+DataReceivedEventHandler
+DebuggableAttribute.DebuggingModes
+DebuggerBrowsableState
+EntryWrittenEventHandler
+EventLogEntryType
+EventLogPermissionAccess
+OverflowAction
+PerformanceCounterCategoryType
+PerformanceCounterInstanceLifetime
+PerformanceCounterPermissionAccess
+PerformanceCounterType
+PresentationTraceLevel
+ProcessPriorityClass
+ProcessWindowStyle
+SampleActivity<T>
+SourceLevels
+Stopwatch
+Конструкторы
+ThreadPriorityLevel
+ThreadState
+ThreadWaitReason
+TraceEventType
+TraceLevel
+TraceOptions
+Stopwatch Класс
+Определение
+Пространство имен:
+System.Diagnostics
+Сборка:
+System.Runtime.dll
+Предоставляет набор методов и свойств, которые можно использовать для точного измерения затраченного времени.
+
+C#
+
+Копировать
+public class Stopwatch
+Наследование
+Object
+Stopwatch
+Примеры
+В следующем примере показано, как использовать Stopwatch класс для определения времени выполнения приложения.
+
+C#
+
+Копировать
+using System;
+using System.Diagnostics;
+using System.Threading;
+class Program
+{
+    static void Main(string[] args)
+    {
+        Stopwatch stopWatch = new Stopwatch();
+        stopWatch.Start();
+        Thread.Sleep(10000);
+        stopWatch.Stop();
+        // Get the elapsed time as a TimeSpan value.
+        TimeSpan ts = stopWatch.Elapsed;
+
+        // Format and display the TimeSpan value.
+        string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
+            ts.Hours, ts.Minutes, ts.Seconds,
+            ts.Milliseconds / 10);
+        Console.WriteLine("RunTime " + elapsedTime);
+    }
+}
+В следующем примере показано использование Stopwatch класса для вычисления данных о производительности.
+
+C#
+
+Копировать
+using System;
+using System.Diagnostics;
+
+namespace StopWatchSample
+{
+    class OperationsTimer
+    {
+        public static void Main()
+        {
+            DisplayTimerProperties();
+
+            Console.WriteLine();
+            Console.WriteLine("Press the Enter key to begin:");
+            Console.ReadLine();
+            Console.WriteLine();
+
+            TimeOperations();
+        }
+
+        public static void DisplayTimerProperties()
+        {
+            // Display the timer frequency and resolution.
+            if (Stopwatch.IsHighResolution)
+            {
+                Console.WriteLine("Operations timed using the system's high-resolution performance counter.");
+            }
+            else
+            {
+                Console.WriteLine("Operations timed using the DateTime class.");
+            }
+
+            long frequency = Stopwatch.Frequency;
+            Console.WriteLine("  Timer frequency in ticks per second = {0}",
+                frequency);
+            long nanosecPerTick = (1000L*1000L*1000L) / frequency;
+            Console.WriteLine("  Timer is accurate within {0} nanoseconds",
+                nanosecPerTick);
+        }
+
+        private static void TimeOperations()
+        {
+            long nanosecPerTick = (1000L*1000L*1000L) / Stopwatch.Frequency;
+            const long numIterations = 10000;
+
+            // Define the operation title names.
+            String [] operationNames = {"Operation: Int32.Parse(\"0\")",
+                                           "Operation: Int32.TryParse(\"0\")",
+                                           "Operation: Int32.Parse(\"a\")",
+                                           "Operation: Int32.TryParse(\"a\")"};
+
+            // Time four different implementations for parsing
+            // an integer from a string.
+
+            for (int operation = 0; operation <= 3; operation++)
+            {
+                // Define variables for operation statistics.
+                long numTicks = 0;
+                long numRollovers = 0;
+                long maxTicks = 0;
+                long minTicks = Int64.MaxValue;
+                int indexFastest = -1;
+                int indexSlowest = -1;
+                long milliSec = 0;
+
+                Stopwatch time10kOperations = Stopwatch.StartNew();
+
+                // Run the current operation 10001 times.
+                // The first execution time will be tossed
+                // out, since it can skew the average time.
+
+                for (int i=0; i<=numIterations; i++)
+                {
+                    long ticksThisTime = 0;
+                    int inputNum;
+                    Stopwatch timePerParse;
+
+                    switch (operation)
+                    {
+                        case 0:
+                            // Parse a valid integer using
+                            // a try-catch statement.
+
+                            // Start a new stopwatch timer.
+                            timePerParse = Stopwatch.StartNew();
+
+                            try
+                            {
+                                inputNum = Int32.Parse("0");
+                            }
+                            catch (FormatException)
+                            {
+                                inputNum = 0;
+                            }
+
+                            // Stop the timer, and save the
+                            // elapsed ticks for the operation.
+
+                            timePerParse.Stop();
+                            ticksThisTime = timePerParse.ElapsedTicks;
+                            break;
+                        case 1:
+                            // Parse a valid integer using
+                            // the TryParse statement.
+
+                            // Start a new stopwatch timer.
+                            timePerParse = Stopwatch.StartNew();
+
+                            if (!Int32.TryParse("0", out inputNum))
+                            {
+                                inputNum = 0;
+                            }
+
+                            // Stop the timer, and save the
+                            // elapsed ticks for the operation.
+                            timePerParse.Stop();
+                            ticksThisTime = timePerParse.ElapsedTicks;
+                            break;
+                        case 2:
+                            // Parse an invalid value using
+                            // a try-catch statement.
+
+                            // Start a new stopwatch timer.
+                            timePerParse = Stopwatch.StartNew();
+
+                            try
+                            {
+                                inputNum = Int32.Parse("a");
+                            }
+                            catch (FormatException)
+                            {
+                                inputNum = 0;
+                            }
+
+                            // Stop the timer, and save the
+                            // elapsed ticks for the operation.
+                            timePerParse.Stop();
+                            ticksThisTime = timePerParse.ElapsedTicks;
+                            break;
+                        case 3:
+                            // Parse an invalid value using
+                            // the TryParse statement.
+
+                            // Start a new stopwatch timer.
+                            timePerParse = Stopwatch.StartNew();
+
+                            if (!Int32.TryParse("a", out inputNum))
+                            {
+                                inputNum = 0;
+                            }
+
+                            // Stop the timer, and save the
+                            // elapsed ticks for the operation.
+                            timePerParse.Stop();
+                            ticksThisTime = timePerParse.ElapsedTicks;
+                            break;
+
+                        default:
+                            break;
+                    }
+
+                    // Skip over the time for the first operation,
+                    // just in case it caused a one-time
+                    // performance hit.
+                    if (i == 0)
+                    {
+                        time10kOperations.Reset();
+                        time10kOperations.Start();
+                    }
+                    else
+                    {
+
+                        // Update operation statistics
+                        // for iterations 1-10000.
+                        if (maxTicks < ticksThisTime)
+                        {
+                            indexSlowest = i;
+                            maxTicks = ticksThisTime;
+                        }
+                        if (minTicks > ticksThisTime)
+                        {
+                            indexFastest = i;
+                            minTicks = ticksThisTime;
+                        }
+                        numTicks += ticksThisTime;
+                        if (numTicks < ticksThisTime)
+                        {
+                            // Keep track of rollovers.
+                            numRollovers ++;
+                        }
+                    }
+                }
+
+                // Display the statistics for 10000 iterations.
+
+                time10kOperations.Stop();
+                milliSec = time10kOperations.ElapsedMilliseconds;
+
+                Console.WriteLine();
+                Console.WriteLine("{0} Summary:", operationNames[operation]);
+                Console.WriteLine("  Slowest time:  #{0}/{1} = {2} ticks",
+                    indexSlowest, numIterations, maxTicks);
+                Console.WriteLine("  Fastest time:  #{0}/{1} = {2} ticks",
+                    indexFastest, numIterations, minTicks);
+                Console.WriteLine("  Average time:  {0} ticks = {1} nanoseconds",
+                    numTicks / numIterations,
+                    (numTicks * nanosecPerTick) / numIterations );
+                Console.WriteLine("  Total time looping through {0} operations: {1} milliseconds",
+                    numIterations, milliSec);
+            }
+        }
+     }
+}
+Комментарии
+StopwatchЭкземпляр может измерять затраченное время для одного интервала или общее время, затраченное на несколько интервалов. В типичном Stopwatch сценарии вызывается Start метод, затем вызывается Stop метод, а затем проверяются затраченное время с помощью Elapsed Свойства.
+
+StopwatchЭкземпляр либо работает, либо остановлен; используйте IsRunning для определения текущего состояния Stopwatch . Используйте Start для начала измерения затраченного времени; используйте Stop для отмены измерения затраченного времени. Запросите значение затраченного времени с помощью свойств Elapsed , ElapsedMilliseconds или ElapsedTicks . Вы можете запросить свойства затраченного времени во время выполнения или остановки экземпляра. Свойства затраченного времени постоянно увеличиваются во время Stopwatch работы. они остаются постоянными при остановке экземпляра.
+
+По умолчанию значение затраченного времени Stopwatch экземпляра равно сумме всех измеренных интервалов времени. Каждый вызов начинает подсчитаться Start на совокупное затраченное время; каждый вызов Stop завершает текущую меру интервала и замораживает совокупное значение затраченного времени. Используйте Reset метод для очистки совокупного истекшего времени в существующем Stopwatch экземпляре.
+
+StopwatchМеры времени, затраченные на подсчет тактов таймера в базовом механизме таймера. Если установленное оборудование и операционная система поддерживают счетчик производительности с высоким разрешением, то Stopwatch класс использует этот счетчик для измерения затраченного времени. В противном случае Stopwatch класс использует системный таймер для измерения затраченного времени. Используйте Frequency поля и, IsHighResolution чтобы определить точность и разрешение Stopwatch реализации времени.
+
+StopwatchКласс помогает управлять счетчиками производительности, связанными со временем, в рамках управляемого кода. В частности, Frequency поле и GetTimestamp метод можно использовать вместо неуправляемых интерфейсов API Windows QueryPerformanceFrequency и QueryPerformanceCounter .
+
+ Примечание
+
+На многопроцессорном компьютере не имеет значения, на каком процессоре выполняется поток. Однако из-за ошибок в BIOS или слое абстрагирования оборудования (HAL) можно получить разные временные результаты на разных процессорах. Чтобы указать соответствие процессоров для потока, используйте ProcessThread.ProcessorAffinity метод.
+
+Конструкторы
+КОНСТРУКТОРЫ
+Stopwatch()	
+Инициализирует новый экземпляр класса Stopwatch.
+
+Поля
+ПОЛЯ
+Frequency	
+Получает частоту таймера в виде количества тактов в секунду. Это поле доступно только для чтения.
+
+IsHighResolution	
+Указывает, зависит ли таймер от счетчика производительности высокого разрешения. Это поле доступно только для чтения.
+
+Свойства
+СВОЙСТВА
+Elapsed	
+Получает общее затраченное время, измеренное текущим экземпляром.
+
+ElapsedMilliseconds	
+Получает общее затраченное время в миллисекундах, измеренное текущим экземпляром.
+
+ElapsedTicks	
+Получает общее затраченное время в тактах таймера, измеренное текущим экземпляром.
+
+IsRunning	
+Получает значение, указывающее, запущен ли таймер Stopwatch.
+
+Методы
+МЕТОДЫ
+Equals(Object)	
+Определяет, равен ли указанный объект текущему объекту.
+
+(Унаследовано от Object)
+GetHashCode()	
+Служит хэш-функцией по умолчанию.
+
+(Унаследовано от Object)
+GetTimestamp()	
+Получает текущее число тактов временного механизма.
+
+GetType()	
+Возвращает объект Type для текущего экземпляра.
+
+(Унаследовано от Object)
+MemberwiseClone()	
+Создает неполную копию текущего объекта Object.
+
+(Унаследовано от Object)
+Reset()	
+Останавливает измерение интервала времени и обнуляет затраченное время.
+
+Restart()	
+Останавливает измерение интервала времени, обнуляет затраченное время и начинает измерение затраченного времени.
+
+Start()	
+Запускает или возобновляет измерение затраченного времени для интервала.
+
+StartNew()	
+Инициализирует новый экземпляр Stopwatch, задает свойство затраченного времени равным нулю и запускает измерение затраченного времени.
+
+Stop()	
+Останавливает измерение затраченного времени для интервала.
+
+ToString()	
+Возвращает строку, представляющую текущий объект.
+
+(Унаследовано от Object)
+Применяется к
+ПРИМЕНЯЕТСЯ К
+Продукт	Версии
+.NET	5.0, 6.0 RC 1
+.NET Core	1.0, 1.1, 2.0, 2.1, 2.2, 3.0, 3.1
+.NET Framework	2.0, 3.0, 3.5, 4.0, 4.5, 4.5.1, 4.5.2, 4.6, 4.6.1, 4.6.2, 4.7, 4.7.1, 4.7.2, 4.8
+.NET Standard	1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 2.0, 2.1
+UWP	10.0
+Xamarin.Android	7.1
+Xamarin.iOS	10.8
+Xamarin.Mac	3.0
+См. также раздел
+TimeSpan
+Рекомендуемое содержимое
+Stopwatch.Elapsed Свойство (System.Diagnostics)
+Получает общее затраченное время, измеренное текущим экземпляром.
+Int32.MaxValue Поле (System)
+Представляет наибольшее возможное значение типа Int32. Это поле является константой.
+Инструкция lock. Справочник по C#
+Синхронизация доступа потоков к общему ресурсу с помощью оператора блокировки C#
+
+Byte.MaxValue Поле (System)
+Представляет наибольшее возможное значение типа Byte. Это поле является константой.
+Были ли сведения на этой странице полезными?
+ Да  Нет
+В этой статье
+Определение
+Примеры
+Комментарии
+Конструкторы
+Поля
+Свойства
+Методы
+Применяется к
+См. также раздел
+Документация по предыдущей версии
+Блог
+Участие в доработке
+Конфиденциальность и файлы cookie
+Условия использования
+Товарные знаки
+© Microsoft 2021This is my first book! Welcome!
+asddddddddddddddddddddddddddxxxxxxxxxxxxxxsfsdfsdfefwefmwwefwertdkqw.x[d,qw[sd

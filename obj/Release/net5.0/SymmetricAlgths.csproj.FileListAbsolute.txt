@@ -1,0 +1,16 @@
+/home/zow1k/RiderProjects/lab2/SymmetricAlgths/bin/Release/net5.0/SymmetricAlgths
+/home/zow1k/RiderProjects/lab2/SymmetricAlgths/bin/Release/net5.0/SymmetricAlgths.deps.json
+/home/zow1k/RiderProjects/lab2/SymmetricAlgths/bin/Release/net5.0/SymmetricAlgths.runtimeconfig.json
+/home/zow1k/RiderProjects/lab2/SymmetricAlgths/bin/Release/net5.0/SymmetricAlgths.runtimeconfig.dev.json
+/home/zow1k/RiderProjects/lab2/SymmetricAlgths/bin/Release/net5.0/SymmetricAlgths.dll
+/home/zow1k/RiderProjects/lab2/SymmetricAlgths/bin/Release/net5.0/ref/SymmetricAlgths.dll
+/home/zow1k/RiderProjects/lab2/SymmetricAlgths/bin/Release/net5.0/SymmetricAlgths.pdb
+/home/zow1k/RiderProjects/lab2/SymmetricAlgths/obj/Release/net5.0/SymmetricAlgths.csproj.AssemblyReference.cache
+/home/zow1k/RiderProjects/lab2/SymmetricAlgths/obj/Release/net5.0/SymmetricAlgths.GeneratedMSBuildEditorConfig.editorconfig
+/home/zow1k/RiderProjects/lab2/SymmetricAlgths/obj/Release/net5.0/SymmetricAlgths.AssemblyInfoInputs.cache
+/home/zow1k/RiderProjects/lab2/SymmetricAlgths/obj/Release/net5.0/SymmetricAlgths.AssemblyInfo.cs
+/home/zow1k/RiderProjects/lab2/SymmetricAlgths/obj/Release/net5.0/SymmetricAlgths.csproj.CoreCompileInputs.cache
+/home/zow1k/RiderProjects/lab2/SymmetricAlgths/obj/Release/net5.0/SymmetricAlgths.dll
+/home/zow1k/RiderProjects/lab2/SymmetricAlgths/obj/Release/net5.0/ref/SymmetricAlgths.dll
+/home/zow1k/RiderProjects/lab2/SymmetricAlgths/obj/Release/net5.0/SymmetricAlgths.pdb
+/home/zow1k/RiderProjects/lab2/SymmetricAlgths/obj/Release/net5.0/SymmetricAlgths.genruntimeconfig.cache
